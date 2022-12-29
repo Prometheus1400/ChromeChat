@@ -1,0 +1,17 @@
+{
+    "manifest_version": 3,
+    "name": "Send Notification",
+    "description": "Send a message notification to another chrome user",
+    "version": "1.0",
+    "icons": {
+        "16": "images/chat.png",
+        "32": "images/chat.png",
+        "48": "images/chat.png",
+        "128": "images/chat.png"
+    },
+    "action": {
+        "default_popup": "index.html"
+    },
+
+    "permissions": ["identity", "identity.email"]
+}
