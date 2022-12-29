@@ -14,6 +14,7 @@
     margin-left: auto;
     text-align:left;
     padding:8px;
+    word-wrap:break-word;
 }
 
 .friendMessage{
@@ -25,6 +26,7 @@
     margin-bottom: 2px;
     padding:8px;
     color:black;
+    word-wrap:break-word;
 }
 
 .messages{

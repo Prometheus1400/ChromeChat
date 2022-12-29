@@ -28,10 +28,28 @@ const MessagesBackground = styled("div")(
 function MessageComp(props: { value: string; from: string; userID: string }) {
     const { value, from, userID } = props
 
+    const isValidUrl = (s: string) => {
+        try {
+            return Boolean(new URL(s))
+        } catch (e) {
+            return false
+        }
+    }
+
+    const url = isValidUrl(value)
+
     return (
         <div className="Message">
-            {from === userID && <UserMessage className="userMessage">{value}</UserMessage>}
-            {from !== userID && <FriendMessage className="friendMessage">{value}</FriendMessage>}
+            {from === userID && (
+                <UserMessage className="userMessage">
+                    {url ? <a href={value} target="_blank">{value}</a> : <div>{value}</div>}
+                </UserMessage>
+            )}
+            {from !== userID && (
+                <FriendMessage className="friendMessage">
+                    {url ? <a href={value} target="_blank">{value}</a> : <div>{value}</div>}
+                </FriendMessage>
+            )}
         </div>
     )
 }
@@ -51,60 +69,12 @@ function Chat() {
         .where("members", "==", members)
         .orderBy("createdAt", "desc")
         .limit(12)
-        // .limit(2)
     const [messages, loading, error] = useCollectionData<Message>(chatQuery)
 
     useEffect(() => {
         console.log("messages:", messages)
         scrollToBottom()
     }, [messages])
-    // const messages = [
-    //     {
-    //         members: ["1", "3"],
-    //         value: "hello",
-    //         from: "3",
-    //         createdAt: {
-    //             seconds: 1672242586,
-    //             nanoseconds: 228000000,
-    //         },
-    //     },
-    //     {
-    //         members: ["1", "3"],
-    //         value: "how are you",
-    //         from: "3",
-    //         createdAt: {
-    //             seconds: 1672242591,
-    //             nanoseconds: 490000000,
-    //         },
-    //     },
-    //     {
-    //         members: ["1", "3"],
-    //         value: "I'm good",
-    //         from: "3",
-    //         createdAt: {
-    //             seconds: 1672242607,
-    //             nanoseconds: 885000000,
-    //         },
-    //     },
-    //     {
-    //         members: ["1", "3"],
-    //         value: "hello I am the greatest, the best who ever lived",
-    //         from: "3",
-    //         createdAt: {
-    //             seconds: 1672242749,
-    //             nanoseconds: 330000000,
-    //         },
-    //     },
-    //     {
-    //         members: ["1", "3"],
-    //         from: "1",
-    //         value: "I'm kate",
-    //         createdAt: {
-    //             seconds: 1672244384,
-    //             nanoseconds: 634000000,
-    //         },
-    //     },
-    // ]
 
     const handleChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
