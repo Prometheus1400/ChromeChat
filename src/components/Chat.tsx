@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { chatRoomsRef } from "../config/config"
 import { useCollectionData } from "react-firebase-hooks/firestore"
 import { Message } from "../config/config"
@@ -11,28 +11,17 @@ import { styled } from "@mui/material/styles"
 
 const UserMessage = styled("div")(
     ({ theme }) => `
-    background-color: ${theme.palette.primary.main};
-    max-width: 45%;
-    width: fit-content;
-    padding:4px;
-    border-radius: 10px 10px 10px 10px;
-    margin-left: 1px;
-    margin-bottom: 2px;
-    margin-right: 2px;
-    margin-left: auto;
-    text-align:left;
-    padding:5px;
+    background-color: ${theme.palette.primary.light};
   `
 )
 const FriendMessage = styled("div")(
     ({ theme }) => `
-    background-color: ${theme.palette.secondary.main};
-    max-width: 45%;
-    width: fit-content;
-    padding:4px;
-    border-radius: 10px 10px 10px 10px;
-    margin-left: 2px;
-    margin-bottom: 2px;
+    background-color: ${theme.palette.secondary.light};
+  `
+)
+const MessagesBackground = styled("div")(
+    ({ theme }) => `
+    background-color: ${theme.palette.action.hover};
   `
 )
 
@@ -41,8 +30,8 @@ function MessageComp(props: { value: string; from: string; userID: string }) {
 
     return (
         <div className="Message">
-            {from === userID && <UserMessage>{value}</UserMessage>}
-            {from !== userID && <FriendMessage>{value}</FriendMessage>}
+            {from === userID && <UserMessage className="userMessage">{value}</UserMessage>}
+            {from !== userID && <FriendMessage className="friendMessage">{value}</FriendMessage>}
         </div>
     )
 }
@@ -51,6 +40,10 @@ function Chat() {
     const { userID, friendID } = useParams<string>()
     const [text, setText] = useState<string>("")
     const navigate = useNavigate()
+    const messagesEndRef = useRef<null | HTMLDivElement>(null)
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
 
     const members = [userID!, friendID!]
     members.sort()
@@ -58,10 +51,12 @@ function Chat() {
         .where("members", "==", members)
         .orderBy("createdAt", "desc")
         .limit(12)
+        // .limit(2)
     const [messages, loading, error] = useCollectionData<Message>(chatQuery)
 
     useEffect(() => {
         console.log("messages:", messages)
+        scrollToBottom()
     }, [messages])
     // const messages = [
     //     {
@@ -170,7 +165,12 @@ function Chat() {
                             Back
                         </Button>
                     </div>
-                    <div className="messages">{msgComps?.reverse()}</div>
+                    <MessagesBackground className="messagesBackground">
+                        <div className="messages">
+                            {msgComps?.reverse()}
+                            <div ref={messagesEndRef} />
+                        </div>
+                    </MessagesBackground>
                     <form
                         noValidate
                         autoComplete="off"

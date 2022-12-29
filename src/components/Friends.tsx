@@ -3,9 +3,17 @@ import { UserContext } from "../context/UserContext"
 import { User, usersRef } from "../config/config"
 import { useNavigate } from "react-router-dom"
 import "./Friends.css"
-import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
+import {
+    Collapse,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+} from "@mui/material"
 import { styled } from "@mui/material/styles"
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person"
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt"
+import { ExpandLess, ExpandMore } from "@mui/icons-material"
 
 const MyList = styled(List)(
     ({ theme }) => `
@@ -14,7 +22,7 @@ const MyList = styled(List)(
 )
 
 const MyListItemButton = styled(ListItemButton)(
-    ({theme}) => `
+    ({ theme }) => `
     `
 )
 
@@ -32,10 +40,10 @@ function Friend(props: {
     }
 
     return (
-        <MyListItemButton onClick={handleClick}>
+        <MyListItemButton onClick={handleClick} sx={{ pl: "40px" }}>
             <ListItemIcon>
                 <PersonIcon />
-              </ListItemIcon>
+            </ListItemIcon>
             <ListItemText primary={friendEmail} />
         </MyListItemButton>
     )
@@ -43,10 +51,10 @@ function Friend(props: {
 
 function Friends() {
     const user: User = useContext(UserContext)!
+    const [open, setOpen] = useState<boolean>(true)
 
     let count = 0
     const friendComps = user.friends.map((friend) => {
-        console.log(friend)
         return (
             <Friend
                 key={count++}
@@ -57,7 +65,24 @@ function Friends() {
         )
     })
 
-    return <MyList>{friendComps}</MyList>
+    return (
+        <MyList sx={{maxHeight:"500px", overflowY:"auto"}}>
+            <MyListItemButton
+                onClick={() => {
+                    setOpen((prev) => !prev)
+                }}
+            >
+                <ListItemIcon>
+                    <PeopleAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Friends" />
+                {open ? <ExpandLess /> : <ExpandMore />}
+            </MyListItemButton>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <MyList>{friendComps}</MyList>
+            </Collapse>
+        </MyList>
+    )
 }
 
 export default Friends

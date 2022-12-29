@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import "firebase/compat/firestore"
 import { UserContext } from "./context/UserContext"
 import Friends from "./components/Friends"
@@ -6,7 +6,8 @@ import { usersRef, User } from "./config/config"
 import FriendRequests from "./components/FriendRequests"
 import { Outlet, Route, Routes } from "react-router-dom"
 import Chat from "./components/Chat"
-import { styled } from "@mui/material/styles"
+import { createTheme, styled, ThemeProvider } from "@mui/material/styles"
+import { CssBaseline, useMediaQuery } from "@mui/material"
 
 const MyApp = styled("div")(
     ({ theme }) => `
@@ -18,6 +19,16 @@ const MyApp = styled("div")(
 )
 
 function App() {
+    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
+    const theme = useMemo(
+        () =>
+            createTheme({
+                palette: {
+                    mode: prefersDarkMode ? "dark" : "light",
+                },
+            }),
+        [prefersDarkMode]
+    )
     const [user, setUser] = useState<User>({
         id: "",
         email: "",
@@ -48,7 +59,24 @@ function App() {
         // production / extension ready build
         else {
             chrome.identity.getProfileUserInfo((info) => {
-                console.log("TODO")
+                const docRef = usersRef.doc(info.id)
+                docRef.get().then((doc) => {
+                    if (doc.exists) {
+                        console.log("getUser(): ", doc.data())
+                        const tempUser = doc.data()!
+                        setUser(tempUser)
+                    } else {
+                        // if no results create user in database
+                        const tempUser: User = {
+                            id: info.id,
+                            email: info.email,
+                            friends: [],
+                            friendRequests: [],
+                        }
+                        usersRef.doc(info.id).set(tempUser)
+                        setUser(tempUser)
+                    }
+                })
             })
         }
         // eslint-disable-next-line
@@ -61,30 +89,34 @@ function App() {
     console.log("Current user: ", user)
 
     return (
-        <UserContext.Provider value={user}>
-            <Routes>
-                <Route
-                    element={
-                        <MyApp>
-                            <Outlet />
-                        </MyApp>
-                    }
-                >
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <UserContext.Provider value={user}>
+                <Routes>
                     <Route
-                        path="/"
                         element={
-                            <>
-                                <Friends />
-                                <FriendRequests />
-                            </>
+                            <MyApp>
+                                <Outlet />
+                            </MyApp>
                         }
-                    />
-                    <Route path="/chat/:userID/:friendID" element={
-                        <Chat />
-                    } />
-                </Route>
-            </Routes>
-        </UserContext.Provider>
+                    >
+                        <Route
+                            path="/"
+                            element={
+                                <>
+                                    <Friends />
+                                    <FriendRequests />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/chat/:userID/:friendID"
+                            element={<Chat />}
+                        />
+                    </Route>
+                </Routes>
+            </UserContext.Provider>
+        </ThemeProvider>
     )
 }
 
