@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Send Notification",
-    "description": "Send a message notification to another chrome user",
+    "name": "ChromeChat",
+    "description": "Talk with other Chrome users from the comfort of your browser!",
     "version": "0.0.1",
     "icons": {
         "16": "images/chat.png",
