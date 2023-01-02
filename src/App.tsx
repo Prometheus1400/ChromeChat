@@ -55,7 +55,6 @@ function App() {
                         id: info.id,
                         email: info.email,
                         friends: [],
-                        friendRequests: [],
                     }
                     usersRef.doc(info.id).set(tempUser)
                     setUser(tempUser)
@@ -65,6 +64,7 @@ function App() {
         // production / extension ready build
         else {
             chrome.identity.getProfileUserInfo((info) => {
+                console.log("info")
                 const docRef = usersRef.doc(info.id)
                 docRef.get().then((doc) => {
                     if (doc.exists) {
@@ -77,7 +77,6 @@ function App() {
                             id: info.id,
                             email: info.email,
                             friends: [],
-                            friendRequests: [],
                         }
                         usersRef.doc(info.id).set(tempUser)
                         setUser(tempUser)
