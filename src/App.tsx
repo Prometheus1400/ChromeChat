@@ -1,13 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
+import firebase from "firebase/compat/app"
 import "firebase/compat/firestore"
 import { UserContext } from "./context/UserContext"
 import Friends from "./components/Friends"
-import { usersRef, User } from "./config/config"
+import { usersRef, User, auth } from "./config/config"
 import FriendRequests from "./components/FriendRequests"
 import { Outlet, Route, Routes } from "react-router-dom"
 import Chat from "./components/Chat"
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles"
-import { CssBaseline, useMediaQuery } from "@mui/material"
+import { Button, CssBaseline, useMediaQuery } from "@mui/material"
+import SignIn from "./components/SignIn"
+import SignOut from "./components/SignOut"
+import TopBar from "./components/TopBar"
 
 const MyApp = styled("div")(
     ({ theme }) => `
@@ -29,12 +33,7 @@ function App() {
             }),
         [prefersDarkMode]
     )
-    const [user, setUser] = useState<User>({
-        id: "",
-        email: "",
-        friends: [],
-        friendRequests: [],
-    })
+    const [user, setUser] = useState<User | null>(null)
 
     const getUser = useCallback(() => {
         // for use with npm start
@@ -52,7 +51,14 @@ function App() {
                     setUser(tempUser)
                 } else {
                     // if no results create user in database
-                    usersRef.doc(info.id).set(user)
+                    const tempUser: User = {
+                        id: info.id,
+                        email: info.email,
+                        friends: [],
+                        friendRequests: [],
+                    }
+                    usersRef.doc(info.id).set(tempUser)
+                    setUser(tempUser)
                 }
             })
         }
@@ -86,6 +92,47 @@ function App() {
         getUser()
     }, [getUser])
 
+    // useEffect(() => {
+    //     console.log("getting auth token")
+    //     chrome.identity.getAuthToken({ 'interactive': true }, (token) => {
+    //         console.log("token: " + token);
+            // let credential = firebase.auth.GoogleAuthProvider.credential(null, token);
+            // firebase.auth().signInWithCredential(credential)
+            //     .then((result) => {
+            //         console.log("Login successful!");
+            //         console.log(result.user);
+            //     })
+            //     .catch((error) => {
+            //         console.error(error);
+            //     });
+        // });
+
+        // const docRef = usersRef.doc(googleUser.uid)
+        // docRef.get().then((doc) => {
+        //     if (doc.exists) {
+        //         console.log("getUser(): ", doc.data())
+        //         if (doc.data() === undefined) {
+        //             console.log("failed retrieving user from database")
+        //         } else {
+        //             setUser(doc.data()!)
+        //         }
+        //     } else {
+        //         // if no results create user in database
+        //         console.log("Need to create new user for:", googleUser)
+        //         const tempUser: User = {
+        //             uid: googleUser.uid,
+        //             email: googleUser.email,
+        //             photoURL: googleUser.photoURL,
+        //             displayName: googleUser.displayName,
+        //             friends: [],
+        //             friendRequests: [],
+        //         }
+        //         usersRef.doc(googleUser.uid).set(tempUser)
+        //         setUser(tempUser)
+        //     }
+        // })
+    // }, [])
+
     console.log("Current user: ", user)
 
     return (
@@ -103,10 +150,16 @@ function App() {
                         <Route
                             path="/"
                             element={
-                                <>
-                                    <Friends />
-                                    <FriendRequests />
-                                </>
+                                user ? (
+                                    <>
+                                        <TopBar />
+                                        <FriendRequests />
+                                        <Friends />
+                                    </>
+                                ) : (
+                                    // <SignIn />
+                                    <></>
+                                )
                             }
                         />
                         <Route

@@ -1,3 +1,8 @@
 .Friend {
     background-color: lightblue;
 }
+
+.dialogContainer{
+    position:relative;
+    display:flex;
+}

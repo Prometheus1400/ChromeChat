@@ -4,27 +4,31 @@ import { User, usersRef } from "../config/config"
 import { useNavigate } from "react-router-dom"
 import "./Friends.css"
 import {
+    Button,
     Collapse,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     List,
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    TextField,
 } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import PersonIcon from "@mui/icons-material/Person"
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt"
 import { ExpandLess, ExpandMore } from "@mui/icons-material"
+import AddIcon from "@mui/icons-material/Add"
 
-const MyList = styled(List)(
-    ({ theme }) => `
-    color:${theme.palette.text.primary};
-  `
-)
-
-const MyListItemButton = styled(ListItemButton)(
-    ({ theme }) => `
-    `
-)
+const MyDialog = styled(Dialog)(({theme}) => ({
+    "& .MuiDialog-container": {
+      alignItems: "flex-start"
+    },
+    "width":"50%",
+}))
 
 function Friend(props: {
     friendID: string
@@ -40,21 +44,69 @@ function Friend(props: {
     }
 
     return (
-        <MyListItemButton onClick={handleClick} sx={{ pl: "40px" }}>
+        <ListItemButton onClick={handleClick} sx={{ pl: "20px" }}>
             <ListItemIcon>
                 <PersonIcon />
             </ListItemIcon>
             <ListItemText primary={friendEmail} />
-        </MyListItemButton>
+        </ListItemButton>
+    )
+}
+
+function AddFriend() {
+    const [open, setOpen] = useState<boolean>(false)
+
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    const handleSubmit = () => {}
+
+    return (
+        <div className="dialogContainer">
+            <ListItemButton onClick={handleClickOpen} sx={{ pl: "20px" }}>
+                <ListItemIcon>
+                    <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Add Friend" />
+            </ListItemButton>
+
+            <MyDialog open={open} onClose={handleClose}>
+                <DialogTitle>Enter Friends Email</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        To subscribe to this website, please enter your email
+                        address here. We will send updates occasionally.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Email Address"
+                        type="email"
+                        fullWidth
+                        variant="standard"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Subscribe</Button>
+                </DialogActions>
+            </MyDialog>
+        </div>
     )
 }
 
 function Friends() {
-    const user: User = useContext(UserContext)!
+    const user: User | null = useContext(UserContext)
     const [open, setOpen] = useState<boolean>(true)
 
     let count = 0
-    const friendComps = user.friends.map((friend) => {
+    const friendComps = user?.friends?.map((friend) => {
         return (
             <Friend
                 key={count++}
@@ -66,8 +118,8 @@ function Friends() {
     })
 
     return (
-        <MyList sx={{maxHeight:"500px", overflowY:"auto"}}>
-            <MyListItemButton
+        <List sx={{ maxHeight: "500px", overflowY: "auto" }}>
+            <ListItemButton
                 onClick={() => {
                     setOpen((prev) => !prev)
                 }}
@@ -77,11 +129,14 @@ function Friends() {
                 </ListItemIcon>
                 <ListItemText primary="Friends" />
                 {open ? <ExpandLess /> : <ExpandMore />}
-            </MyListItemButton>
+            </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
-                <MyList>{friendComps}</MyList>
+                <List>
+                    <AddFriend />
+                    {friendComps}
+                </List>
             </Collapse>
-        </MyList>
+        </List>
     )
 }
 

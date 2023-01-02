@@ -1,0 +1,7 @@
+.TopBar {
+    display: flex;
+    gap:auto;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 5px;
+}

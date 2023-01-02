@@ -1,5 +1,6 @@
 import firebase from "firebase/compat/app"
 import "firebase/compat/firestore"
+import "firebase/compat/auth"
 
 firebase.initializeApp({
     apiKey: "AIzaSyAZixDyHYy43pjsByJClzGILfRnEzFt4yo",
@@ -15,11 +16,15 @@ firebase.initializeApp({
 interface Friend {
     id: string
     email: string
+    // photoURL: string
+    // name: string
 }
 
 export interface User {
     id: string
     email: string
+    // photoURL: string
+    // displayName: string
     friends: Friend[]
     friendRequests: []
 }
@@ -33,12 +38,15 @@ export interface Message {
 }
 
 export const firestore = firebase.firestore()
+export const auth = firebase.auth()
 
 const userConverter = {
     toFirestore(user: User): firebase.firestore.DocumentData {
         return {
             id: user.id,
             email: user.email,
+            // photoURL: user.photoURL,
+            // name: user.displayName,
             friends: user.friends,
             friendRequests: user.friendRequests,
         }
@@ -51,6 +59,8 @@ const userConverter = {
         return {
             id: data.id,
             email: data.email,
+            // photoURL: data.photoURL,
+            // displayName: data.name,
             friends: data.friends,
             friendRequests: data.friendRequests,
         }

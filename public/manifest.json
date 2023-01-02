@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Send Notification",
     "description": "Send a message notification to another chrome user",
-    "version": "1.0",
+    "version": "0.0.1",
     "icons": {
         "16": "images/chat.png",
         "32": "images/chat.png",
@@ -12,6 +12,12 @@
     "action": {
         "default_popup": "index.html"
     },
-
-    "permissions": ["identity", "identity.email"]
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx1By2oLsmrgeeAEk0sq7FIoU0VimpLZDbRR5R2GWWu8DsCJ7bdRfPRyasg6ziQU40EWoq9c1xR4tqdWUp2IBjqmlwxKAHazSpOMwaKLec5SGZRupO121LqJHM+/3JKPRNW61gGtvS5QAHyxvNQRlSOUAAJkDiVicxaXImTfhpvwXEzxr7wKoEaPAquKvvQh+YWLxeHJS3nJ3bhd22iEzqv3OK2m+Pp+LuCY38MfY1vKWRHhksyKNjQEhe02eyt2ixfMI2rPIkqSy9JCYYToKn2KD4br1478a1D4d47CTMO0HWXMYHQmXw6v+Rv59M6p8DBKby49pE4fbBo0mxjRYewIDAQAB",
+    "permissions": ["identity"],
+    "oauth2": {
+        "client_id": "645257636224-0kg7dba2o8bfjfi4dvh49r3r6ohlg67q.apps.googleusercontent.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/userinfo.email"
+        ]
+      }
 }
