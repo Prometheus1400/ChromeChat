@@ -19,6 +19,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Divider,
     List,
     ListItemAvatar,
     ListItemButton,
@@ -39,6 +40,7 @@ function FriendComp(props: {
 }) {
     const { userID, friendID, friendEmail } = props
     const navigate = useNavigate()
+    const friendUserName = friendEmail.slice(0, friendEmail.indexOf("@"))
 
     const handleClick = () => {
         const chatURL = "/chat/" + userID + "/" + friendID
@@ -50,7 +52,7 @@ function FriendComp(props: {
             <ListItemAvatar>
             <Avatar sx={{bgcolor:getRandomColor()}} alt="Profile Picturre"> {friendEmail[0]} </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={friendEmail} />
+            <ListItemText primary={friendUserName} />
         </ListItemButton>
     )
 }
