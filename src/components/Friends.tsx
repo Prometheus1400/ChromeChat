@@ -2,7 +2,6 @@ import { useContext, useState } from "react"
 import { UserContext } from "../context/UserContext"
 import {
     User,
-    Friend,
     usersRef,
     friendRequestRef,
     FriendRequest,
@@ -17,9 +16,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
-    Divider,
     List,
     ListItemAvatar,
     ListItemButton,
@@ -27,11 +24,11 @@ import {
     ListItemText,
     TextField,
 } from "@mui/material"
-import { styled } from "@mui/material/styles"
-import PersonIcon from "@mui/icons-material/Person"
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt"
 import { ExpandLess, ExpandMore } from "@mui/icons-material"
 import AddIcon from "@mui/icons-material/Add"
+import { useTheme } from '@mui/material/styles';
+
 
 function FriendComp(props: {
     friendID: string
@@ -43,14 +40,21 @@ function FriendComp(props: {
     const friendUserName = friendEmail.slice(0, friendEmail.indexOf("@"))
 
     const handleClick = () => {
-        const chatURL = "/chat/" + userID + "/" + friendID
+        const chatURL =
+            "/chat/" + userID + "/" + friendID + "/" + friendUserName
         navigate(chatURL, { replace: true })
     }
 
     return (
         <ListItemButton onClick={handleClick} sx={{ pl: "20px" }}>
             <ListItemAvatar>
-            <Avatar sx={{bgcolor:getRandomColor()}} alt="Profile Picturre"> {friendEmail[0]} </Avatar>
+                <Avatar
+                    sx={{ bgcolor: getRandomColor() }}
+                    alt="Profile Picturre"
+                >
+                    {" "}
+                    {friendEmail[0]}{" "}
+                </Avatar>
             </ListItemAvatar>
             <ListItemText primary={friendUserName} />
         </ListItemButton>
@@ -181,26 +185,31 @@ function Friends() {
         )
     })
 
+    const theme = useTheme()
+
     return (
-        <List sx={{ maxHeight: "500px", overflowY: "auto" }}>
-            <ListItemButton
-                onClick={() => {
-                    setOpen((prev) => !prev)
-                }}
-            >
-                <ListItemIcon>
-                    <PeopleAltIcon />
-                </ListItemIcon>
-                <ListItemText primary="Friends" />
-                {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List>
-                    <AddFriend userID={user?.id!} userEmail={user?.email!} />
-                    {friendComps}
-                </List>
-            </Collapse>
-        </List>
+        <>
+                <ListItemButton sx={{maxHeight:"48px", position:"relative"}}
+                    onClick={() => {
+                        setOpen((prev) => !prev)
+                    }}
+                >
+                    <ListItemIcon>
+                        <PeopleAltIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Friends" />
+                    {open ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse sx={{overflowY:"auto", position:"relative"}} in={open} timeout="auto" unmountOnExit>
+                    <List>
+                        <AddFriend
+                            userID={user?.id!}
+                            userEmail={user?.email!}
+                        />
+                        {friendComps}
+                    </List>
+                </Collapse>
+        </>
     )
 }
 

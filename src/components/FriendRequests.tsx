@@ -10,7 +10,7 @@ import {
     Typography,
     ListItemAvatar,
 } from "@mui/material"
-import { useState, useContext, useEffect, Fragment, useCallback } from "react"
+import { useState, useContext, useEffect, useCallback } from "react"
 import PersonAddIcon from "@mui/icons-material/PersonAdd"
 import { UserContext } from "../context/UserContext"
 import { FriendRequest, friendRequestRef, getRandomColor, usersRef } from "../config/config"
@@ -135,7 +135,7 @@ function FriendRequests() {
     })
 
     return (
-        <List sx={{ maxHeight: "500px", overflowY: "auto" }}>
+        <List >
             <ListItemButton
                 onClick={() => {
                     setOpen((prev) => !prev)
@@ -147,8 +147,7 @@ function FriendRequests() {
                 <ListItemText primary="Friend Requests" />
                 {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                {/* Friend Request comp list here */}
+            <Collapse sx={{maxHeight:"220px", overflowY:"auto"}} in={open} timeout="auto" unmountOnExit>
                 <List>{friendReqComps}</List>
             </Collapse>
         </List>

@@ -42,12 +42,24 @@ function MessageComp(props: { value: string; from: string; userID: string }) {
         <div className="Message">
             {from === userID && (
                 <UserMessage className="userMessage">
-                    {url ? <a href={value} target="_blank">{value}</a> : <div>{value}</div>}
+                    {url ? (
+                        <a href={value} target="_blank">
+                            {value}
+                        </a>
+                    ) : (
+                        <div>{value}</div>
+                    )}
                 </UserMessage>
             )}
             {from !== userID && (
                 <FriendMessage className="friendMessage">
-                    {url ? <a href={value} target="_blank">{value}</a> : <div>{value}</div>}
+                    {url ? (
+                        <a href={value} target="_blank">
+                            {value}
+                        </a>
+                    ) : (
+                        <div>{value}</div>
+                    )}
                 </FriendMessage>
             )}
         </div>
@@ -55,7 +67,7 @@ function MessageComp(props: { value: string; from: string; userID: string }) {
 }
 
 function Chat() {
-    const { userID, friendID } = useParams<string>()
+    const { userID, friendID, friendName } = useParams<string>()
     const [text, setText] = useState<string>("")
     const navigate = useNavigate()
     const messagesEndRef = useRef<null | HTMLDivElement>(null)
@@ -134,6 +146,11 @@ function Chat() {
                         >
                             Back
                         </Button>
+                        <div style={{position: "absolute", left: "50%"}}>
+                            <div style={{position: "relative", left: "-50%", marginTop:"5px", fontSize:"16px"}}>
+                                {friendName}
+                            </div>
+                        </div>
                     </div>
                     <MessagesBackground className="messagesBackground">
                         <div className="messages">
