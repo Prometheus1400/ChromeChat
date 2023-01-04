@@ -185,8 +185,6 @@ function Friends() {
         )
     })
 
-    const theme = useTheme()
-
     return (
         <>
                 <ListItemButton sx={{maxHeight:"48px", position:"relative"}}
